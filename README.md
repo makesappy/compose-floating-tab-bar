@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/77f76481-f537-4728-974e-dc081d9be83c
 
 ```kotlin
 @Composable
-fun MyScreen() {
+fun BasicExample() {
     val scrollConnection = rememberFloatingTabBarScrollConnection()
     var selectedTabKey by remember { mutableStateOf("home") }
 
@@ -29,7 +29,6 @@ fun MyScreen() {
             // Your scrollable content
         }
 
-        // Floating tab bar
         FloatingTabBar(
             selectedTabKey = selectedTabKey,
             scrollConnection = scrollConnection,
@@ -52,7 +51,7 @@ fun MyScreen() {
                 onClick = { selectedTabKey = "profile" }
             )
 
-            // Standalone tab (appears separately)
+            // Standalone tab
             standaloneTab(
                 key = "search",
                 title = { Text("Search") },
@@ -64,11 +63,11 @@ fun MyScreen() {
 }
 ```
 
-## Advanced Usage with Accessories
+## Usage with Accessory
 
 ```kotlin
 @Composable
-fun AdvancedExample() {
+fun AccessoryExample() {
     val scrollConnection = rememberFloatingTabBarScrollConnection()
     var selectedTabKey by remember { mutableStateOf("home") }
 
@@ -78,17 +77,55 @@ fun AdvancedExample() {
         FloatingTabBar(
             selectedTabKey = selectedTabKey,
             scrollConnection = scrollConnection,
-            // Inline accessory (compact state)
             inlineAccessory = { modifier, animatedVisibilityScope ->
                 CompactMiniPlayer(
                     modifier = modifier,
                     animatedVisibilityScope = animatedVisibilityScope
                 )
             },
-            // Expanded accessory (full state)
             expandedAccessory = { modifier, animatedVisibilityScope ->
                 MiniPlayer(
                     modifier = modifier,
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 16.dp)
+        ) {
+            // Your tabs...
+        }
+    }
+}
+```
+
+## Apply background blurring using Haze by Chris Banes
+
+```kotlin
+@Composable
+fun HazeBlurExample() {
+    val scrollConnection = rememberFloatingTabBarScrollConnection()
+    var selectedTabKey by remember { mutableStateOf("home") }
+    val hazeState = rememberHazeState()
+
+    Box {
+        LazyColumn(Modifier.hazeSource(hazeState)) {
+            // Your content
+        }
+        
+        FloatingTabBar(
+            selectedTabKey = selectedTabKey,
+            scrollConnection = scrollConnection,
+            tabBarContentModifier = Modifier.hazeEffect(hazeState),
+            inlineAccessory = { modifier, animatedVisibilityScope ->
+                CompactMiniPlayer(
+                    modifier = modifier.hazeEffect(hazeState),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+            },
+            expandedAccessory = { modifier, animatedVisibilityScope ->
+                MiniPlayer(
+                    modifier = modifier.hazeEffect(hazeState),
                     animatedVisibilityScope = animatedVisibilityScope
                 )
             },
