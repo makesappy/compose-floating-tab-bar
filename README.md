@@ -2,6 +2,8 @@
 
 An Android floating tab bar implementation written in Jetpack Compose that mimics the iOS 26 liquid glass tab bar behavior. Features smooth transitions between expanded and inline states with built-in scroll behavior handling.
 
+![Demo](./assets/demo.mov)
+
 ## Features
 
 - **Smooth State Transitions**: Seamlessly transitions between expanded and inline states based on scroll behavior
