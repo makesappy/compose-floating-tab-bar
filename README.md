@@ -4,137 +4,116 @@ An Android floating tab bar implementation written in Jetpack Compose that mimic
 
 <img src="assets/demo.gif" width="250">
 
+*FloatingTabBar sample app demo using a frosty background effect*
+
 ## Features
 
-- **Smooth State Transitions**: Seamlessly transitions between expanded and inline states based on scroll behavior
+- **Expanded and Inline States**: Transition between both states when scrolling
 - **Customizable Scroll Behavior**: Control when the tab bar transitions (on scroll down, scroll up, or never)
-- **Accessory Support**: Add custom accessories (like media players) that adapt to both states
-- **Customize Accessory State Transitions**: Accessory states can be animated using the same shared element transition powering the floating tab bar animation
+- **Accessory**: Add a custom accessory (like a media player) that adapts to both states
+- **Customize Accessory Transitions**: Accessory states can be animated using the same shared element transition powering the floating tab bar animation
+- **Customizable colors, shapes, and sizes**
 
 ## Basic Usage
 
 ```kotlin
-@Composable
-fun BasicExample() {
-    val scrollConnection = rememberFloatingTabBarScrollConnection()
-    var selectedTabKey by remember { mutableStateOf("home") }
+val scrollConnection = rememberFloatingTabBarScrollConnection()
+var selectedTabKey by remember { mutableStateOf("home") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Your main content with scroll support
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollConnection)
-        ) {
-            // Your scrollable content
-        }
+Box(modifier = Modifier.fillMaxSize()) {
+    // Your main content with scroll support
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollConnection)
+    ) {
+        // Your scrollable content
+    }
 
-        FloatingTabBar(
-            selectedTabKey = selectedTabKey,
-            scrollConnection = scrollConnection,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp)
-        ) {
-            // Regular tabs
-            tab(
-                key = "home",
-                title = { Text("Home") },
-                icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                onClick = { selectedTabKey = "home" }
-            )
-            
-            tab(
-                key = "profile",
-                title = { Text("Profile") },
-                icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                onClick = { selectedTabKey = "profile" }
-            )
+    FloatingTabBar(
+        selectedTabKey = selectedTabKey,
+        scrollConnection = scrollConnection,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(horizontal = 16.dp)
+    ) {
+        // Regular tabs
+        tab(
+            key = "home",
+            title = { Text("Home") },
+            icon = { Icon(Icons.Default.Home, contentDescription = null) },
+            onClick = { selectedTabKey = "home" }
+        )
+        
+        tab(
+            key = "profile",
+            title = { Text("Profile") },
+            icon = { Icon(Icons.Default.Person, contentDescription = null) },
+            onClick = { selectedTabKey = "profile" }
+        )
 
-            // Standalone tab
-            standaloneTab(
-                key = "search",
-                title = { Text("Search") },
-                icon = { Icon(Icons.Default.Search, contentDescription = null) },
-                onClick = { selectedTabKey = "search" }
-            )
-        }
+        // Standalone tab
+        standaloneTab(
+            key = "search",
+            title = { Text("Search") },
+            icon = { Icon(Icons.Default.Search, contentDescription = null) },
+            onClick = { selectedTabKey = "search" }
+        )
     }
 }
 ```
 
 ## Usage with Accessory
+The inline and expanded accessory composable lambdas are extension function of `SharedTransitionLayoutScope` and provide an `animatedVisibilityScope` parameter, so it's possible to customize the accessory transition between the two states to be in sync with the tab bar's transition.
 
 ```kotlin
-@Composable
-fun AccessoryExample() {
-    val scrollConnection = rememberFloatingTabBarScrollConnection()
-    var selectedTabKey by remember { mutableStateOf("home") }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Your content...
-        
-        FloatingTabBar(
-            selectedTabKey = selectedTabKey,
-            scrollConnection = scrollConnection,
-            inlineAccessory = { modifier, animatedVisibilityScope ->
-                CompactMiniPlayer(
-                    modifier = modifier,
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-            },
-            expandedAccessory = { modifier, animatedVisibilityScope ->
-                MiniPlayer(
-                    modifier = modifier,
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp)
-        ) {
-            // Your tabs...
-        }
+FloatingTabBar(
+    ...
+    inlineAccessory = { modifier, animatedVisibilityScope ->
+        CompactMiniPlayer(
+            modifier = modifier,
+            animatedVisibilityScope = animatedVisibilityScope
+        )
+    },
+    expandedAccessory = { modifier, animatedVisibilityScope ->
+        ExpandedMiniPlayer(
+            modifier = modifier,
+            animatedVisibilityScope = animatedVisibilityScope
+        )
     }
+) {
+    // Your tabs...
 }
 ```
 
-## Apply background blurring using Haze by Chris Banes
+## Background frosty effects using Haze by Chris Banes
 
 ```kotlin
-@Composable
-fun HazeBlurExample() {
-    val scrollConnection = rememberFloatingTabBarScrollConnection()
-    var selectedTabKey by remember { mutableStateOf("home") }
-    val hazeState = rememberHazeState()
-
-    Box {
-        LazyColumn(Modifier.hazeSource(hazeState)) {
-            // Your content
+Box {
+    // Apply hazeSource modifier on content
+    LazyColumn(Modifier.hazeSource(hazeState)) {
+        // Your content
+    }
+    
+    FloatingTabBar(
+        ...
+        // Use the tabBarContentModifier parameter to apply extra background effects
+        tabBarContentModifier = Modifier.hazeEffect(hazeState),
+        inlineAccessory = { modifier, animatedVisibilityScope ->
+            CompactMiniPlayer(
+                // Apply the hazeEffect modifier directly on the accessory composable
+                modifier = modifier.hazeEffect(hazeState),
+                animatedVisibilityScope = animatedVisibilityScope
+            )
+        },
+        expandedAccessory = { modifier, animatedVisibilityScope ->
+            MiniPlayer(
+                modifier = modifier.hazeEffect(hazeState),
+                animatedVisibilityScope = animatedVisibilityScope
+            )
         }
-        
-        FloatingTabBar(
-            selectedTabKey = selectedTabKey,
-            scrollConnection = scrollConnection,
-            tabBarContentModifier = Modifier.hazeEffect(hazeState),
-            inlineAccessory = { modifier, animatedVisibilityScope ->
-                CompactMiniPlayer(
-                    modifier = modifier.hazeEffect(hazeState),
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-            },
-            expandedAccessory = { modifier, animatedVisibilityScope ->
-                MiniPlayer(
-                    modifier = modifier.hazeEffect(hazeState),
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-            },
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 16.dp)
-        ) {
-            // Your tabs...
-        }
+    ) {
+        // Your tabs...
     }
 }
 ```
