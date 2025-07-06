@@ -2,11 +2,15 @@
 
 package com.elyesmansour.floating_tab_bar
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,22 +24,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,85 +44,78 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.elyesmansour.floating_tab_bar.screens.HomeScreen
+import com.elyesmansour.floating_tab_bar.screens.PodcastsScreen
+import com.elyesmansour.floating_tab_bar.screens.ProfileScreen
+import com.elyesmansour.floating_tab_bar.screens.SearchScreen
 import com.elyesmansour.floating_tab_bar.ui.theme.FloatingTabBarTheme
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
-@PreviewLightDark
+@Preview
 @Composable
-fun FloatingTabBarPreview() {
+fun PlantSky() {
     FloatingTabBarTheme {
         val scrollConnection = rememberFloatingTabBarScrollConnection()
         val hazeState = rememberHazeState()
         var selectedTabKey by remember { mutableStateOf<Any>("home") }
 
-        val tabs = remember {
+        val leadingTabs = remember {
             listOf(
-                PreviewTab("home", "Home", Icons.Default.Home),
-                PreviewTab("profile", "Profile", Icons.Default.Person)
+                PlantSkyTab("home", "Home", Icons.Default.Home),
+                PlantSkyTab("podcasts", "Podcasts", Icons.Default.PlayArrow),
+                PlantSkyTab("profile", "Profile", Icons.Default.Person)
             )
         }
-
-        val standaloneTab = remember {
-            PreviewTab("search", "Search", Icons.Default.Search)
+        val trailingTab = remember {
+            PlantSkyTab("search", "", Icons.Default.Search)
         }
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.statusBars)
                 .background(MaterialTheme.colorScheme.surface)
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            // Main content area
+            // Main content area with animated tab switching
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 16.dp)
-                    .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = "Floating Tab Bar Demo",
+                    text = "PlantSky",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 )
 
-                Text(
-                    text = "Scroll to see the tab bar transition between expanded and inline states",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 32.dp)
-                )
-
-                // Scrollable content to trigger the transition
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .nestedScroll(scrollConnection)
-                        .hazeSource(hazeState)
-                ) {
-                    items(20) { index ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        ) {
-                            Text(
-                                text = "Content Item ${index + 1}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
+                AnimatedContent(
+                    targetState = selectedTabKey,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                    modifier = Modifier.weight(1f)
+                ) { target ->
+                    when (target) {
+                        "home" -> HomeScreen(
+                            scrollConnection = scrollConnection,
+                            hazeState = hazeState
+                        )
+                        "profile" -> ProfileScreen(
+                            scrollConnection = scrollConnection,
+                            hazeState = hazeState
+                        )
+                        "podcasts" -> PodcastsScreen(
+                            scrollConnection = scrollConnection,
+                            hazeState = hazeState
+                        )
+                        "search" -> SearchScreen(
+                            scrollConnection = scrollConnection,
+                            hazeState = hazeState
+                        )
                     }
                 }
             }
@@ -150,56 +143,57 @@ fun FloatingTabBarPreview() {
                     scrollConnection = scrollConnection,
                     tabBarContentModifier = Modifier.hazeEffect(hazeState),
                     inlineAccessory = { modifier, animatedVisibilityScope ->
-                        PreviewAccessory(
+                        PlantSkyAccessory(
                             modifier = modifier.hazeEffect(hazeState),
                             isInline = true,
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                     },
                     expandedAccessory = { modifier, animatedVisibilityScope ->
-                        PreviewAccessory(
+                        PlantSkyAccessory(
                             modifier = modifier.hazeEffect(hazeState),
                             isInline = false,
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                     }
                 ) {
-                    tabs.forEach { tabItem ->
+                    val tabTint = @Composable { isSelected: Boolean ->
+                        if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
+                    }
+                    val indication = @Composable { ripple(color = MaterialTheme.colorScheme.tertiary) }
+                    
+                    leadingTabs.forEach { tabItem ->
                         tab(
                             key = tabItem.key,
                             title = {
                                 Text(
                                     text = tabItem.text,
-                                    color = if (selectedTabKey == tabItem.key) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+                                    color = tabTint(selectedTabKey == tabItem.key)
                                 )
                             },
                             icon = {
                                 Icon(
                                     imageVector = tabItem.icon,
                                     contentDescription = null,
-                                    tint = if (selectedTabKey == tabItem.key) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+                                    tint = tabTint(selectedTabKey == tabItem.key)
                                 )
                             },
-                            onClick = { selectedTabKey = tabItem.key }
+                            onClick = { selectedTabKey = tabItem.key },
+                            indication = indication
                         )
                     }
 
                     standaloneTab(
-                        key = standaloneTab.key,
-                        title = {
-                            Text(
-                                text = standaloneTab.text,
-                                color = if (selectedTabKey == standaloneTab.key) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
-                            )
-                        },
+                        key = trailingTab.key,
                         icon = {
                             Icon(
-                                imageVector = standaloneTab.icon,
+                                imageVector = trailingTab.icon,
                                 contentDescription = null,
-                                tint = if (selectedTabKey == standaloneTab.key) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+                                tint = tabTint(selectedTabKey == trailingTab.key)
                             )
                         },
-                        onClick = { selectedTabKey = standaloneTab.key }
+                        onClick = { selectedTabKey = trailingTab.key },
+                        indication = indication
                     )
                 }
             }
@@ -208,7 +202,7 @@ fun FloatingTabBarPreview() {
 }
 
 @Composable
-private fun SharedTransitionScope.PreviewAccessory(
+private fun SharedTransitionScope.PlantSkyAccessory(
     modifier: Modifier = Modifier,
     isInline: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -219,12 +213,8 @@ private fun SharedTransitionScope.PreviewAccessory(
     val songTitleStyle = if (isInline) MaterialTheme.typography.bodySmall else MaterialTheme.typography.bodyMedium
     val contentPadding = if (isInline) PaddingValues(vertical = 8.dp, horizontal = 16.dp) else PaddingValues(vertical = 12.dp, horizontal = 24.dp)
     val songInfoPadding = if (isInline) 8.dp else 12.dp
-    val previousButtonSize = if (isInline) 28.dp else 32.dp
     val playButtonSize = if (isInline) 32.dp else 40.dp
-    val nextButtonSize = if (isInline) 28.dp else 32.dp
-    val previousIconSize = if (isInline) 16.dp else 20.dp
     val playIconSize = if (isInline) 20.dp else 24.dp
-    val nextIconSize = if (isInline) 16.dp else 20.dp
 
     Row(
         modifier = modifier.padding(contentPadding),
@@ -238,13 +228,13 @@ private fun SharedTransitionScope.PreviewAccessory(
                 )
                 .size(albumArtSize)
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(albumArtCornerRadius)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "🎵",
+                text = "🎧",
                 style = albumArtTextStyle,
                 modifier = Modifier.sharedBounds(
                     sharedContentState = rememberSharedContentState("artwork"),
@@ -262,7 +252,7 @@ private fun SharedTransitionScope.PreviewAccessory(
                 .padding(horizontal = songInfoPadding)
         ) {
             Text(
-                text = "Bohemian Rhapsody",
+                text = "The Secret Life of Succulents",
                 style = songTitleStyle,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
@@ -277,7 +267,7 @@ private fun SharedTransitionScope.PreviewAccessory(
 
             if (!isInline) {
                 Text(
-                    text = "Queen",
+                    text = "Plant Whisperer Podcast",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1
@@ -300,23 +290,6 @@ private fun SharedTransitionScope.PreviewAccessory(
         ) {
             IconButton(
                 onClick = {},
-                modifier = Modifier.size(previousButtonSize)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Previous",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState("previous_button"),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        .size(previousIconSize)
-                )
-            }
-
-            IconButton(
-                onClick = {},
                 modifier = Modifier.size(playButtonSize)
             ) {
                 Icon(
@@ -331,28 +304,11 @@ private fun SharedTransitionScope.PreviewAccessory(
                         .size(playIconSize)
                 )
             }
-
-            IconButton(
-                onClick = {},
-                modifier = Modifier.size(nextButtonSize)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Next",
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState("next_button"),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                        .size(nextIconSize)
-                )
-            }
         }
     }
 }
 
-private data class PreviewTab(
+private data class PlantSkyTab(
     val key: String,
     val text: String,
     val icon: ImageVector
