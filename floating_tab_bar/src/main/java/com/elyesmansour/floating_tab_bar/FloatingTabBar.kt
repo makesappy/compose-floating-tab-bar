@@ -33,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +57,64 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+
+
+/**
+ * A floating tab bar that can transition between inline and expanded states.
+ *
+ * @param isInline controls the FloatingTabBar's inline state
+ * @param selectedTabKey the key of the currently selected tab
+ * @param modifier the modifier to be applied to the tab bar
+ * @param colors the colors used by the tab bar components
+ * @param shapes the shapes used by the tab bar components
+ * @param sizes the sizes and spacing used by the tab bar components
+ * @param shadows the shadows used by the tab bar components
+ * @param tabBarContentModifier modifier applied to the tab bar sections containing the grouped tabs and standalone tab.
+ * It is applied after the default styling (background, shadow, clip) but before any content padding.
+ * @param inlineAccessory the accessory composable that appears in inline state (e.g., compact media player)
+ * @param expandedAccessory the accessory composable that appears in expanded state (e.g., full media player)
+ * @param contentKey optional key that when changed retriggers the content lambda
+ * @param content the content defining the tabs
+ */
+@Composable
+fun FloatingTabBar(
+    isInline: Boolean,
+    selectedTabKey: Any?,
+    modifier: Modifier = Modifier,
+    tabBarContentModifier: Modifier = Modifier,
+    inlineAccessory: (@Composable SharedTransitionScope.(Modifier, AnimatedVisibilityScope) -> Unit)? = null,
+    expandedAccessory: (@Composable SharedTransitionScope.(Modifier, AnimatedVisibilityScope) -> Unit)? = null,
+    colors: FloatingTabBarColors = FloatingTabBarDefaults.colors(),
+    shapes: FloatingTabBarShapes = FloatingTabBarDefaults.shapes(),
+    sizes: FloatingTabBarSizes = FloatingTabBarDefaults.sizes(),
+    shadows: FloatingTabBarShadows = FloatingTabBarDefaults.shadows(),
+    contentKey: Any? = null,
+    content: FloatingTabBarScope.() -> Unit
+) {
+    val scrollConnection = rememberFloatingTabBarScrollConnection(
+        initialIsInline = isInline,
+        inlineBehavior = FloatingTabBarInlineBehavior.Never
+    )
+
+    LaunchedEffect(isInline) {
+        if (isInline) scrollConnection.inline() else scrollConnection.expand()
+    }
+
+    FloatingTabBar(
+        selectedTabKey = selectedTabKey,
+        scrollConnection = scrollConnection,
+        modifier = modifier,
+        tabBarContentModifier = tabBarContentModifier,
+        inlineAccessory = inlineAccessory,
+        expandedAccessory = expandedAccessory,
+        colors = colors,
+        shapes = shapes,
+        sizes = sizes,
+        shadows = shadows,
+        contentKey = contentKey,
+        content = content
+    )
+}
 
 /**
  * A floating tab bar that transitions between inline and expanded states based on scroll behavior.
