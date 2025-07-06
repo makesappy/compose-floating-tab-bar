@@ -328,14 +328,12 @@ interface FloatingTabBarScope {
      * Note: Calling this method more than once will override the previous standalone tab value.
      *
      * @param key Unique identifier for the standalone tab
-     * @param title Composable content for the tab title
      * @param icon Composable content for the tab icon
      * @param onClick Callback invoked when the tab is clicked
      * @param indication Optional indication provider for touch feedback, defaults to LocalIndication.current
      */
     fun standaloneTab(
         key: Any,
-        title: @Composable () -> Unit,
         icon: @Composable () -> Unit,
         onClick: () -> Unit,
         indication: (@Composable () -> Indication)? = { LocalIndication.current }
@@ -923,14 +921,13 @@ private class FloatingTabBarScopeImpl : FloatingTabBarScope {
     
     override fun standaloneTab(
         key: Any,
-        title: @Composable () -> Unit,
         icon: @Composable () -> Unit,
         onClick: () -> Unit,
         indication: (@Composable () -> Indication)?
     ) {
         standaloneTab = FloatingTabBarTab(
             key = key,
-            title = title,
+            title = {},
             icon = icon,
             onClick = onClick,
             indication = indication
