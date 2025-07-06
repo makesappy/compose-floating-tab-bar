@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -590,12 +591,15 @@ private fun SharedTransitionScope.ExpandedBar(
             shadows = shadows,
             animatedVisibilityScope = animatedVisibilityScope,
             tabBarContentModifier = tabBarContentModifier,
-            modifier = Modifier.constrainAs(tabGroupTabsRef) {
-                start.linkTo(parent.start)
-                end.linkTo(searchTabRef.start, margin = sizes.componentSpacing)
-                top.linkTo(accessoryRef.bottom, margin = sizes.componentSpacing)
-                horizontalBias = 0f
-            }
+            modifier = Modifier
+                .constrainAs(tabGroupTabsRef) {
+                    width = Dimension.fillToConstraints
+                    start.linkTo(parent.start)
+                    end.linkTo(searchTabRef.start, margin = sizes.componentSpacing)
+                    top.linkTo(accessoryRef.bottom, margin = sizes.componentSpacing)
+                    horizontalBias = 0f
+                }
+                .wrapContentWidth(align = Alignment.Start)
         )
 
         ExpandedStandaloneTab(
@@ -689,6 +693,7 @@ private fun SharedTransitionScope.ExpandedTabs(
             .clip(shapes.tabBarShape)
             .then(tabBarContentModifier)
             .padding(sizes.tabBarContentPadding)
+            .wrapContentWidth(align = Alignment.Start, unbounded = true)
             .animateContentSize()
     ) {
         scope.tabs.forEach { tab ->

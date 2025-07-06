@@ -155,7 +155,10 @@ fun PlantSky() {
                             isInline = false,
                             animatedVisibilityScope = animatedVisibilityScope
                         )
-                    }
+                    },
+                    sizes = FloatingTabBarDefaults.sizes(
+                        tabExpandedContentPadding = PaddingValues(vertical = 6.dp, horizontal = 16.dp)
+                    )
                 ) {
                     val tabTint = @Composable { isSelected: Boolean ->
                         if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
