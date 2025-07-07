@@ -54,6 +54,7 @@ import com.elyesmansour.floating_tab_bar.screens.SearchScreen
 import com.elyesmansour.floating_tab_bar.ui.theme.FloatingTabBarTheme
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @Preview
@@ -97,25 +98,15 @@ fun PlantSky() {
                 AnimatedContent(
                     targetState = selectedTabKey,
                     transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .hazeSource(hazeState)
                 ) { target ->
                     when (target) {
-                        "home" -> HomeScreen(
-                            scrollConnection = scrollConnection,
-                            hazeState = hazeState
-                        )
-                        "profile" -> ProfileScreen(
-                            scrollConnection = scrollConnection,
-                            hazeState = hazeState
-                        )
-                        "podcasts" -> PodcastsScreen(
-                            scrollConnection = scrollConnection,
-                            hazeState = hazeState
-                        )
-                        "search" -> SearchScreen(
-                            scrollConnection = scrollConnection,
-                            hazeState = hazeState
-                        )
+                        "home" -> HomeScreen(scrollConnection = scrollConnection)
+                        "profile" -> ProfileScreen(scrollConnection = scrollConnection)
+                        "podcasts" -> PodcastsScreen(scrollConnection = scrollConnection)
+                        "search" -> SearchScreen(scrollConnection = scrollConnection)
                     }
                 }
             }

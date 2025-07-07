@@ -35,8 +35,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 
 data class PlantPost(
     val id: String,
@@ -53,7 +51,6 @@ data class PlantPost(
 @Composable
 fun HomeScreen(
     scrollConnection: NestedScrollConnection,
-    hazeState: HazeState,
     modifier: Modifier = Modifier
 ) {
     val posts = remember {
@@ -137,7 +134,6 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollConnection)
-            .hazeSource(hazeState)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {

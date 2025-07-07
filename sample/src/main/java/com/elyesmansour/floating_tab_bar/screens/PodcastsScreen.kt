@@ -31,8 +31,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 
 data class PodcastEpisode(
     val id: String,
@@ -48,7 +46,6 @@ data class PodcastEpisode(
 @Composable
 fun PodcastsScreen(
     scrollConnection: NestedScrollConnection,
-    hazeState: HazeState,
     modifier: Modifier = Modifier
 ) {
     val episodes = remember {
@@ -132,7 +129,6 @@ fun PodcastsScreen(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollConnection)
-            .hazeSource(hazeState)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

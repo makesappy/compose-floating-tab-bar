@@ -35,13 +35,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 
 @Composable
 fun ProfileScreen(
     scrollConnection: NestedScrollConnection,
-    hazeState: HazeState,
     modifier: Modifier = Modifier
 ) {
     val userPosts = remember {
@@ -125,7 +122,6 @@ fun ProfileScreen(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollConnection)
-            .hazeSource(hazeState)
     ) {
         // Profile Header
         Card(

@@ -34,8 +34,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 
 data class TrendingTopic(
     val id: String,
@@ -55,7 +53,6 @@ data class SuggestedUser(
 @Composable
 fun SearchScreen(
     scrollConnection: NestedScrollConnection,
-    hazeState: HazeState,
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -132,7 +129,6 @@ fun SearchScreen(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollConnection)
-            .hazeSource(hazeState)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
