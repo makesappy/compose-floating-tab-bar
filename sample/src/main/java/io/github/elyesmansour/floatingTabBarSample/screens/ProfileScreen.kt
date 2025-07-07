@@ -1,4 +1,4 @@
-package com.elyesmansour.floating_tab_bar.screens
+package io.github.elyesmansour.floatingTabBarSample.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,115 +36,207 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-data class PlantPost(
-    val id: String,
-    val username: String,
-    val handle: String,
-    val content: String,
-    val timestamp: String,
-    val likes: Int,
-    val reposts: Int,
-    val isLiked: Boolean = false,
-    val isReposted: Boolean = false
-)
-
 @Composable
-fun HomeScreen(
+fun ProfileScreen(
     scrollConnection: NestedScrollConnection,
     modifier: Modifier = Modifier
 ) {
-    val posts = remember {
+    val userPosts = remember {
         listOf(
             PlantPost(
-                id = "1",
-                username = "Plant Mama",
-                handle = "@plantmama",
-                content = "Just repotted my snake plant and it's looking so happy! 🐍🌱 The new terracotta pot is perfect for drainage.",
-                timestamp = "2h",
-                likes = 24,
-                reposts = 3
+                id = "u1",
+                username = "You",
+                handle = "@you",
+                content = "Just started my journey into plant parenthood! Got my first pothos today and I'm already in love 🌱💚",
+                timestamp = "3h",
+                likes = 12,
+                reposts = 2
             ),
             PlantPost(
-                id = "2",
-                username = "Succulent Sam",
-                handle = "@succulentsam",
-                content = "Hot take: Overwatering kills more plants than underwatering. Your plants don't need daily drinks! 💧",
-                timestamp = "4h",
-                likes = 156,
-                reposts = 32
-            ),
-            PlantPost(
-                id = "3",
-                username = "Fern Fanatic",
-                handle = "@fernlover",
-                content = "Found this gorgeous Boston fern at the local nursery for $8! Sometimes the best plants are hiding in plain sight 🌿",
-                timestamp = "6h",
+                id = "u2",
+                username = "You",
+                handle = "@you",
+                content = "Question for the plant community: Is it normal for my snake plant to be this dramatic? It's been sulking since I moved it 2 inches to the left 🐍",
+                timestamp = "1d",
                 likes = 45,
-                reposts = 7
+                reposts = 8
             ),
             PlantPost(
-                id = "4",
-                username = "Monstera Mike",
-                handle = "@monsteramike",
-                content = "My monstera deliciosa just unfurled its 50th leaf! 🍃 Each one gets more fenestrated than the last. Plant parenthood is so rewarding.",
-                timestamp = "8h",
-                likes = 89,
+                id = "u3",
+                username = "You",
+                handle = "@you",
+                content = "Update: The pothos has taken over my entire bookshelf and I'm not even mad about it. This is my life now 📚🌿",
+                timestamp = "2d",
+                likes = 78,
                 reposts = 15
             ),
             PlantPost(
-                id = "5",
-                username = "Cactus Queen",
-                handle = "@cactusqueen",
-                content = "Reminder: Desert plants need desert conditions! Don't put your cactus in a humid bathroom 🌵",
-                timestamp = "12h",
+                id = "u4",
+                username = "You",
+                handle = "@you",
+                content = "PSA: Apparently you can't water plants with coffee. Who knew? 🙃 My plants are now properly hydrated and I'm properly caffeinated.",
+                timestamp = "3d",
+                likes = 156,
+                reposts = 34
+            ),
+            PlantPost(
+                id = "u5",
+                username = "You",
+                handle = "@you",
+                content = "Went to the nursery for 'just one plant' and came home with six. I see no problem here 🛒🌱",
+                timestamp = "4d",
                 likes = 203,
-                reposts = 48
+                reposts = 67
             ),
             PlantPost(
-                id = "6",
-                username = "Herb Hero",
-                handle = "@herbhero",
-                content = "Fresh basil from my windowsill garden made tonight's pasta absolutely perfect! Nothing beats homegrown herbs 🌿🍝",
-                timestamp = "1d",
-                likes = 67,
-                reposts = 12
+                id = "u6",
+                username = "You",
+                handle = "@you",
+                content = "My plant collection has officially outgrown my apartment. Time to find a bigger place... or maybe just more creative spots? 🏡",
+                timestamp = "5d",
+                likes = 89,
+                reposts = 21
             ),
             PlantPost(
-                id = "7",
-                username = "Fiddle Leaf Fig",
-                handle = "@fiddleleaffig",
-                content = "Yes, I'm dramatic. Yes, I'll drop leaves if you move me. Yes, I'm worth it. 💁‍♀️🌱",
-                timestamp = "1d",
-                likes = 334,
-                reposts = 89
+                id = "u7",
+                username = "You",
+                handle = "@you",
+                content = "Today I learned that talking to your plants actually works! My monstera unfurled a new leaf right after I told it about my day 🗣️🌿",
+                timestamp = "6d",
+                likes = 134,
+                reposts = 28
             ),
             PlantPost(
-                id = "8",
-                username = "Pothos Paul",
-                handle = "@pothosp",
-                content = "Propagated 15 pothos cuttings this week! Who wants some? Plant swaps are the best way to grow your collection 🌿",
-                timestamp = "2d",
-                likes = 78,
-                reposts = 23
+                id = "u8",
+                username = "You",
+                handle = "@you",
+                content = "First successful propagation! 🎉 These little roots are giving me more joy than they probably should. Plant parent level: unlocked ✅",
+                timestamp = "1w",
+                likes = 267,
+                reposts = 45
             )
         )
     }
 
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollConnection)
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(posts) { post ->
-            PlantPostCard(post = post)
+        // Profile Header
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Y",
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                
+                Text(
+                    text = "Your Plant Journey",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                
+                Text(
+                    text = "@you",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                
+                Row(
+                    modifier = Modifier.padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "${userPosts.size}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Posts",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "847",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Followers",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "23",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Plants",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+        
+        // Posts List
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(userPosts) { post ->
+                UserPlantPostCard(post = post)
+            }
         }
     }
 }
 
 @Composable
-private fun PlantPostCard(
+private fun UserPlantPostCard(
     post: PlantPost,
     modifier: Modifier = Modifier
 ) {
@@ -175,7 +267,7 @@ private fun PlantPostCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = post.username.first().toString(),
+                        text = "Y",
                         color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold

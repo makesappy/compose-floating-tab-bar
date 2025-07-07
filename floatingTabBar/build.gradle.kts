@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.elyesmansour.floating_tab_bar"
+    namespace = "io.github.elyesmansour.floatingTabBar"
     compileSdk = 36
 
     defaultConfig {

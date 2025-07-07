@@ -1,4 +1,4 @@
-package com.elyesmansour.floating_tab_bar.screens
+package io.github.elyesmansour.floatingTabBarSample.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

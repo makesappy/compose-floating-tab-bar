@@ -20,5 +20,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "floating-tab-bar-root"
-include(":floating_tab_bar")
+include(":floatingTabBar")
 include(":sample")

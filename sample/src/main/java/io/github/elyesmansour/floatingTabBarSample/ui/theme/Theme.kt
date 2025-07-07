@@ -1,4 +1,4 @@
-package com.elyesmansour.floating_tab_bar.ui.theme
+package io.github.elyesmansour.floatingTabBarSample.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme

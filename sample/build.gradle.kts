@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.elyesmansour.floating_tab_bar"
+    namespace = "io.github.elyesmansour.floatingTabBarSample"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.elyesmansour.floating_tab_bar_sample"
+        applicationId = "io.github.elyesmansour.floatingTabBarSample"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(project(":floating_tab_bar"))
+    implementation(project(":floatingTabBar"))
 
     implementation(libs.haze)
     implementation(libs.haze.materials)

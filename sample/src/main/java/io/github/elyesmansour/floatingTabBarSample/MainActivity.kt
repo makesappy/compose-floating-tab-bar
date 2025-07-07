@@ -1,11 +1,11 @@
-package com.elyesmansour.floating_tab_bar
+package io.github.elyesmansour.floatingTabBarSample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import com.elyesmansour.floating_tab_bar.ui.theme.FloatingTabBarTheme
+import io.github.elyesmansour.floatingTabBarSample.ui.theme.FloatingTabBarTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

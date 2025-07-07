@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalSharedTransitionApi::class)
 
-package com.elyesmansour.floating_tab_bar
+package io.github.elyesmansour.floatingTabBarSample
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -47,15 +47,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.elyesmansour.floating_tab_bar.screens.HomeScreen
-import com.elyesmansour.floating_tab_bar.screens.PodcastsScreen
-import com.elyesmansour.floating_tab_bar.screens.ProfileScreen
-import com.elyesmansour.floating_tab_bar.screens.SearchScreen
-import com.elyesmansour.floating_tab_bar.ui.theme.FloatingTabBarTheme
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import io.github.elyesmansour.floatingTabBar.FloatingTabBar
+import io.github.elyesmansour.floatingTabBar.FloatingTabBarDefaults
+import io.github.elyesmansour.floatingTabBar.rememberFloatingTabBarScrollConnection
+import io.github.elyesmansour.floatingTabBarSample.screens.HomeScreen
+import io.github.elyesmansour.floatingTabBarSample.screens.PodcastsScreen
+import io.github.elyesmansour.floatingTabBarSample.screens.ProfileScreen
+import io.github.elyesmansour.floatingTabBarSample.screens.SearchScreen
+import io.github.elyesmansour.floatingTabBarSample.ui.theme.FloatingTabBarTheme
 
 @Preview
 @Composable
@@ -153,7 +156,10 @@ fun PlantSky() {
                         )
                     },
                     sizes = FloatingTabBarDefaults.sizes(
-                        tabExpandedContentPadding = PaddingValues(vertical = 6.dp, horizontal = 16.dp)
+                        tabExpandedContentPadding = PaddingValues(
+                            vertical = 6.dp,
+                            horizontal = 16.dp
+                        )
                     )
                 ) {
                     val tabTint = @Composable { isSelected: Boolean ->
