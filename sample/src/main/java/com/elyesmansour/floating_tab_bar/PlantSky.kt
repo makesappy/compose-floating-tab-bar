@@ -62,8 +62,12 @@ import dev.chrisbanes.haze.rememberHazeState
 fun PlantSky() {
     FloatingTabBarTheme {
         val scrollConnection = rememberFloatingTabBarScrollConnection()
-        val hazeState = rememberHazeState()
         var selectedTabKey by remember { mutableStateOf<Any>("home") }
+
+        val hazeState = rememberHazeState()
+        val hazeEffectModifier = remember {
+            Modifier.hazeEffect(hazeState) { noiseFactor = 0f }
+        }
 
         val leadingTabs = remember {
             listOf(
@@ -116,6 +120,7 @@ fun PlantSky() {
                     .then(
                         if (scrollConnection.isInline) {
                             Modifier.hazeEffect(hazeState) {
+                                noiseFactor = 0f
                                 progressive = HazeProgressive.verticalGradient(
                                     startIntensity = 0.05f
                                 )
@@ -132,17 +137,17 @@ fun PlantSky() {
                         .windowInsetsPadding(WindowInsets.navigationBars),
                     selectedTabKey = selectedTabKey,
                     scrollConnection = scrollConnection,
-                    tabBarContentModifier = Modifier.hazeEffect(hazeState),
+                    tabBarContentModifier = hazeEffectModifier,
                     inlineAccessory = { modifier, animatedVisibilityScope ->
                         PlantSkyAccessory(
-                            modifier = modifier.hazeEffect(hazeState),
+                            modifier = modifier.then(hazeEffectModifier),
                             isInline = true,
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                     },
                     expandedAccessory = { modifier, animatedVisibilityScope ->
                         PlantSkyAccessory(
-                            modifier = modifier.hazeEffect(hazeState),
+                            modifier = modifier.then(hazeEffectModifier),
                             isInline = false,
                             animatedVisibilityScope = animatedVisibilityScope
                         )
