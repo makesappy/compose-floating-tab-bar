@@ -1,6 +1,6 @@
 # FloatingTabBar
 
-A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior. Features smooth transitions between expanded and inline states with built-in scroll behavior handling.
+A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior.
 
 <img src="assets/demo.gif" width="250">
 
