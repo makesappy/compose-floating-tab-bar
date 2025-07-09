@@ -274,11 +274,10 @@ class FloatingTabBarScrollConnection(
  * Creates and remembers a [FloatingTabBarScrollConnection] instance.
  *
  * @param initialIsInline Initial state of the tab bar (inline or expanded). Default is false.
- * @param scrollThreshold The minimum scroll distance required to trigger a state change. Default is 20.dp.
+ * @param scrollThreshold The minimum scroll distance required to trigger a state change. Default is 50.dp.
  * @param inlineBehavior Defines when the tab bar should transition to inline state. Default is [FloatingTabBarInlineBehavior.OnScrollDown].
  * @return A remembered [FloatingTabBarScrollConnection] instance.
  */
-// TODO rememberSaveable
 @Composable
 fun rememberFloatingTabBarScrollConnection(
     initialIsInline: Boolean = false,

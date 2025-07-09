@@ -1,12 +1,14 @@
 [versions]
 agp = "8.11.0"
 constraintlayoutCompose = "1.1.1"
-haze = "1.6.6"
+haze = "1.6.7"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.01"
+vanniktechMavenPublish = "0.33.0"
+gradleupNmcp = "1.0.1"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -28,4 +30,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }
+gradleup-nmcp = { id = "com.gradleup.nmcp", version.ref = "gradleupNmcp" }
 

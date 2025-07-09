@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.vanniktech.maven.publish)
+    alias(libs.plugins.gradleup.nmcp)
 }
 
 android {
@@ -24,15 +26,50 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+
+    coordinates("io.github.elyesmansour", "floatingTabBar", "1.0.0")
+
+    pom {
+        name = "FloatingTabBar"
+        description = "A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior"
+        url = "https://github.com/elyesmansour/compose-floating-tab-bar"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                name = "Elyes Mansour"
+                email = "27696255+elyesmansour@users.noreply.github.com"
+                url = "https://github.com/elyesmansour"
+            }
+        }
+        scm {
+            connection = "scm:git:git://github.com/elyesmansour/compose-floating-tab-bar.git"
+            developerConnection = "scm:git:ssh://github.com/elyesmansour/compose-floating-tab-bar.git"
+            url = "https://github.com/elyesmansour/compose-floating-tab-bar"
+        }
     }
 }
 
