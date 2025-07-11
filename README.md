@@ -4,7 +4,7 @@ A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar b
 
 <img src="assets/demo.gif" width="250">
 
-*FloatingTabBar sample app demo using a frosty background effect*
+*Sample app using background blurring effects*
 
 ## Features
 
@@ -86,7 +86,7 @@ FloatingTabBar(
 }
 ```
 
-## Background frosty effects using Haze by Chris Banes
+## Background blurring effects using Haze by Chris Banes
 
 ```kotlin
 Box {

@@ -43,14 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
@@ -69,7 +68,7 @@ import androidx.constraintlayout.compose.Dimension
  * @param colors the colors used by the tab bar components
  * @param shapes the shapes used by the tab bar components
  * @param sizes the sizes and spacing used by the tab bar components
- * @param shadows the shadows used by the tab bar components
+ * @param elevations the elevation values used by the tab bar components
  * @param tabBarContentModifier modifier applied to the tab bar sections containing the grouped tabs and standalone tab.
  * It is applied after the default styling (background, shadow, clip) but before any content padding.
  * @param inlineAccessory the accessory composable that appears in inline state (e.g., compact media player)
@@ -88,7 +87,7 @@ fun FloatingTabBar(
     colors: FloatingTabBarColors = FloatingTabBarDefaults.colors(),
     shapes: FloatingTabBarShapes = FloatingTabBarDefaults.shapes(),
     sizes: FloatingTabBarSizes = FloatingTabBarDefaults.sizes(),
-    shadows: FloatingTabBarShadows = FloatingTabBarDefaults.shadows(),
+    elevations: FloatingTabBarElevations = FloatingTabBarDefaults.elevations(),
     contentKey: Any? = null,
     content: FloatingTabBarScope.() -> Unit
 ) {
@@ -111,7 +110,7 @@ fun FloatingTabBar(
         colors = colors,
         shapes = shapes,
         sizes = sizes,
-        shadows = shadows,
+        elevations = elevations,
         contentKey = contentKey,
         content = content
     )
@@ -126,7 +125,7 @@ fun FloatingTabBar(
  * @param colors the colors used by the tab bar components
  * @param shapes the shapes used by the tab bar components
  * @param sizes the sizes and spacing used by the tab bar components
- * @param shadows the shadows used by the tab bar components
+ * @param elevations the elevation values used by the tab bar components
  * @param tabBarContentModifier modifier applied to the tab bar sections containing the grouped tabs and standalone tab.
  * It is applied after the default styling (background, shadow, clip) but before any content padding.
  * @param inlineAccessory the accessory composable that appears in inline state (e.g., compact media player)
@@ -145,7 +144,7 @@ fun FloatingTabBar(
     colors: FloatingTabBarColors = FloatingTabBarDefaults.colors(),
     shapes: FloatingTabBarShapes = FloatingTabBarDefaults.shapes(),
     sizes: FloatingTabBarSizes = FloatingTabBarDefaults.sizes(),
-    shadows: FloatingTabBarShadows = FloatingTabBarDefaults.shadows(),
+    elevations: FloatingTabBarElevations = FloatingTabBarDefaults.elevations(),
     contentKey: Any? = null,
     content: FloatingTabBarScope.() -> Unit
 ) {
@@ -169,7 +168,7 @@ fun FloatingTabBar(
                     colors = colors,
                     shapes = shapes,
                     sizes = sizes,
-                    shadows = shadows,
+                    elevations = elevations,
                     tabBarContentModifier = tabBarContentModifier,
                     animatedVisibilityScope = this@AnimatedContent
                 )
@@ -182,7 +181,7 @@ fun FloatingTabBar(
                     colors = colors,
                     shapes = shapes,
                     sizes = sizes,
-                    shadows = shadows,
+                    elevations = elevations,
                     tabBarContentModifier = tabBarContentModifier,
                     animatedVisibilityScope = this@AnimatedContent
                 )
@@ -350,7 +349,7 @@ private fun SharedTransitionScope.InlineBar(
     colors: FloatingTabBarColors,
     shapes: FloatingTabBarShapes,
     sizes: FloatingTabBarSizes,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     tabBarContentModifier: Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -364,7 +363,7 @@ private fun SharedTransitionScope.InlineBar(
             shapes = shapes,
             sizes = sizes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             tabBarContentModifier = tabBarContentModifier,
             modifier = Modifier.constrainAs(tabGroupRef) {
@@ -378,7 +377,7 @@ private fun SharedTransitionScope.InlineBar(
             isAccessoryShared = isAccessoryShared,
             shapes = shapes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier.constrainAs(accessoryRef) {
                 width = Dimension.fillToConstraints
@@ -393,7 +392,7 @@ private fun SharedTransitionScope.InlineBar(
             scope = scope,
             shapes = shapes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             tabBarContentModifier = tabBarContentModifier,
             modifier = Modifier.constrainAs(searchTabRef) {
@@ -415,7 +414,7 @@ private fun SharedTransitionScope.InlineTab(
     shapes: FloatingTabBarShapes,
     sizes: FloatingTabBarSizes,
     colors: FloatingTabBarColors,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier,
     tabBarContentModifier: Modifier
@@ -429,9 +428,9 @@ private fun SharedTransitionScope.InlineTab(
                     animatedVisibilityScope = animatedVisibilityScope,
                     zIndexInOverlay = 1f
                 )
-                .dropShadow(
+                .shadow(
                     shape = shapes.tabBarShape,
-                    shadow = shadows.inlineShadow
+                    elevation = elevations.inlineElevation
                 )
                 .background(
                     color = colors.backgroundColor,
@@ -473,7 +472,7 @@ private fun SharedTransitionScope.InlineStandaloneTab(
     scope: FloatingTabBarScopeImpl,
     shapes: FloatingTabBarShapes,
     colors: FloatingTabBarColors,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier,
     tabBarContentModifier: Modifier
@@ -490,9 +489,9 @@ private fun SharedTransitionScope.InlineStandaloneTab(
                     animatedVisibilityScope = animatedVisibilityScope,
                     zIndexInOverlay = 1f
                 )
-                .dropShadow(
+                .shadow(
                     shape = shapes.standaloneTabShape,
-                    shadow = shadows.inlineShadow
+                    elevation = elevations.inlineElevation
                 )
                 .background(
                     color = colors.backgroundColor,
@@ -515,7 +514,7 @@ private fun SharedTransitionScope.InlineAccessory(
     isAccessoryShared: Boolean,
     colors: FloatingTabBarColors,
     shapes: FloatingTabBarShapes,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier
 ) {
@@ -539,9 +538,9 @@ private fun SharedTransitionScope.InlineAccessory(
             accessory(
                 Modifier
                     .fillMaxSize()
-                    .dropShadow(
+                    .shadow(
                         shape = shapes.accessoryShape,
-                        shadow = shadows.inlineShadow
+                        elevation = elevations.inlineElevation
                     )
                     .background(color = colors.accessoryBackgroundColor, shapes.accessoryShape)
                     .clip(shapes.accessoryShape),
@@ -560,7 +559,7 @@ private fun SharedTransitionScope.ExpandedBar(
     colors: FloatingTabBarColors,
     shapes: FloatingTabBarShapes,
     sizes: FloatingTabBarSizes,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     tabBarContentModifier: Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
@@ -572,7 +571,7 @@ private fun SharedTransitionScope.ExpandedBar(
             isAccessoryShared = isAccessoryShared,
             shapes = shapes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier.constrainAs(accessoryRef) {
                 start.linkTo(parent.start)
@@ -587,7 +586,7 @@ private fun SharedTransitionScope.ExpandedBar(
             shapes = shapes,
             sizes = sizes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             tabBarContentModifier = tabBarContentModifier,
             modifier = Modifier
@@ -605,7 +604,7 @@ private fun SharedTransitionScope.ExpandedBar(
             scope = scope,
             shapes = shapes,
             colors = colors,
-            shadows = shadows,
+            elevations = elevations,
             animatedVisibilityScope = animatedVisibilityScope,
             tabBarContentModifier = tabBarContentModifier,
             modifier = Modifier.constrainAs(searchTabRef) {
@@ -625,7 +624,7 @@ private fun SharedTransitionScope.ExpandedAccessory(
     isAccessoryShared: Boolean,
     colors: FloatingTabBarColors,
     shapes: FloatingTabBarShapes,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier
 ) {
@@ -648,9 +647,9 @@ private fun SharedTransitionScope.ExpandedAccessory(
         ) {
             accessory(
                 Modifier
-                    .dropShadow(
+                    .shadow(
                         shape = shapes.accessoryShape,
-                        shadow = shadows.expandedShadow
+                        elevation = elevations.expandedElevation
                     )
                     .background(color = colors.accessoryBackgroundColor, shapes.accessoryShape)
                     .clip(shapes.accessoryShape),
@@ -666,7 +665,7 @@ private fun SharedTransitionScope.ExpandedTabs(
     shapes: FloatingTabBarShapes,
     sizes: FloatingTabBarSizes,
     colors: FloatingTabBarColors,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier,
     tabBarContentModifier: Modifier
@@ -681,9 +680,9 @@ private fun SharedTransitionScope.ExpandedTabs(
                 animatedVisibilityScope = animatedVisibilityScope,
                 zIndexInOverlay = 1f
             )
-            .dropShadow(
+            .shadow(
                 shape = shapes.tabBarShape,
-                shadow = shadows.expandedShadow
+                elevation = elevations.expandedElevation
             )
             .background(
                 color = colors.backgroundColor,
@@ -745,7 +744,7 @@ private fun SharedTransitionScope.ExpandedStandaloneTab(
     scope: FloatingTabBarScopeImpl,
     shapes: FloatingTabBarShapes,
     colors: FloatingTabBarColors,
-    shadows: FloatingTabBarShadows,
+    elevations: FloatingTabBarElevations,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier,
     tabBarContentModifier: Modifier
@@ -762,9 +761,9 @@ private fun SharedTransitionScope.ExpandedStandaloneTab(
                     animatedVisibilityScope = animatedVisibilityScope,
                     zIndexInOverlay = 1f
                 )
-                .dropShadow(
+                .shadow(
                     shape = shapes.standaloneTabShape,
-                    shadow = shadows.expandedShadow
+                    elevation = elevations.expandedElevation
                 )
                 .background(
                     color = colors.backgroundColor,
@@ -968,12 +967,12 @@ data class FloatingTabBarShapes(
 )
 
 /**
- * Represents the shadows used in [FloatingTabBar].
+ * Represents the elevations used in [FloatingTabBar].
  */
 @Immutable
-data class FloatingTabBarShadows(
-    val inlineShadow: Shadow,
-    val expandedShadow: Shadow,
+data class FloatingTabBarElevations(
+    val inlineElevation: Dp,
+    val expandedElevation: Dp,
 )
 
 /**
@@ -1053,23 +1052,17 @@ object FloatingTabBarDefaults {
     )
 
     /**
-     * Creates a [FloatingTabBarShadows] that represents the default shadows used in a [FloatingTabBar].
+     * Creates a [FloatingTabBarElevations] that represents the default elevations used in a [FloatingTabBar].
      *
-     * @param inlineShadow the shadow used for tabs in inline state
-     * @param expandedShadow the shadow used for tabs in expanded state
+     * @param inlineElevation the elevation used for tabs in inline state
+     * @param expandedElevation the elevation used for tabs in expanded state
      */
     @Composable
-    fun shadows(
-        inlineShadow: Shadow = Shadow(
-            radius = 6.dp,
-            color = Color.Black.copy(alpha = 0.25f)
-        ),
-        expandedShadow: Shadow = Shadow(
-            radius = 12.dp,
-            color = Color.Black.copy(alpha = 0.25f)
-        ),
-    ): FloatingTabBarShadows = FloatingTabBarShadows(
-        inlineShadow = inlineShadow,
-        expandedShadow = expandedShadow,
+    fun elevations(
+        inlineElevation: Dp = 6.dp,
+        expandedElevation: Dp = 12.dp,
+    ): FloatingTabBarElevations = FloatingTabBarElevations(
+        inlineElevation = inlineElevation,
+        expandedElevation = expandedElevation,
     )
 }
