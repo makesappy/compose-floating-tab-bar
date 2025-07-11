@@ -1,4 +1,8 @@
 # FloatingTabBar
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.elyesmansour/floatingTabBar)](https://central.sonatype.com/artifact/io.github.elyesmansour/floatingTabBar)
+[![Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Compose](https://img.shields.io/badge/compose-1.8.3-blue.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/androidx/releases/compose)
 
 A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior.
 
@@ -14,8 +18,22 @@ A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar b
 - **Customize Accessory Transitions**: Accessory states can be animated using the same shared element transition powering the floating tab bar animation
 - **Customizable colors, shapes, and sizes**
 
-## Basic Usage
+## Setup
+Add the following dependency to your `build.gradle.kts` file:
+```kotlin
+implementation("io.github.elyesmansour:floatingTabBar:1.0.0")
+```
+And ensure Maven Central is listed as a repository in your `settings.gradle.kts` file:
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        // ... other repositories
+        mavenCentral()
+    }
+}
+```
 
+## Basic Usage
 ```kotlin
 val scrollConnection = rememberFloatingTabBarScrollConnection()
 var selectedTabKey by remember { mutableStateOf("home") }
