@@ -21,7 +21,7 @@ A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar b
 ## Setup
 Add the following dependency to your `build.gradle.kts` file:
 ```kotlin
-implementation("io.github.elyesmansour:floatingTabBar:1.0.0")
+implementation("io.github.elyesmansour:floatingTabBar:1.0.1")
 ```
 And ensure Maven Central is listed as a repository in your `settings.gradle.kts` file:
 ```kotlin
@@ -73,7 +73,6 @@ Box(modifier = Modifier.fillMaxSize()) {
         // Standalone tab
         standaloneTab(
             key = "search",
-            title = { Text("Search") },
             icon = { Icon(Icons.Default.Search, contentDescription = null) },
             onClick = { selectedTabKey = "search" }
         )
