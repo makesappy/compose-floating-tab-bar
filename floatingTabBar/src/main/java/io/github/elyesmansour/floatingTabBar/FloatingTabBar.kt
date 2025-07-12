@@ -353,63 +353,89 @@ private fun SharedTransitionScope.InlineBar(
     tabBarContentModifier: Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+    val inlineTab = scope.getInlineTab(selectedTabKey)
+    val standaloneTab = scope.standaloneTab
+    val hasInlineTab = inlineTab != null
+    val hasStandaloneTab = standaloneTab != null
+    
     ConstraintLayout(Modifier.fillMaxWidth()) {
-        val (tabGroupRef, accessoryRef, searchTabRef) = createRefs()
+        val (tabGroupRef, accessoryRef, standaloneTabRef) = createRefs()
 
-        InlineTab(
-            scope = scope,
-            selectedTabKey = selectedTabKey,
-            onInlineTabClick = onInlineTabClick,
-            shapes = shapes,
-            sizes = sizes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            tabBarContentModifier = tabBarContentModifier,
-            modifier = Modifier.constrainAs(tabGroupRef) {
-                start.linkTo(parent.start)
-                centerVerticallyTo(parent)
-            }
-        )
+        if (hasInlineTab) {
+            InlineTab(
+                inlineTab = inlineTab,
+                onInlineTabClick = onInlineTabClick,
+                shapes = shapes,
+                sizes = sizes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                tabBarContentModifier = tabBarContentModifier,
+                modifier = Modifier.constrainAs(tabGroupRef) {
+                    start.linkTo(parent.start)
+                    centerVerticallyTo(parent)
+                }
+            )
+        }
 
-        InlineAccessory(
-            accessory = accessory,
-            isAccessoryShared = isAccessoryShared,
-            shapes = shapes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            modifier = Modifier.constrainAs(accessoryRef) {
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-                centerVerticallyTo(parent)
-                start.linkTo(tabGroupRef.end, sizes.componentSpacing)
-                end.linkTo(searchTabRef.start, sizes.componentSpacing)
-            }
-        )
+        if (accessory != null) {
+            InlineAccessory(
+                accessory = accessory,
+                isAccessoryShared = isAccessoryShared,
+                shapes = shapes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                modifier = Modifier.constrainAs(accessoryRef) {
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                    centerVerticallyTo(parent)
+                    when {
+                        hasInlineTab && hasStandaloneTab -> {
+                            start.linkTo(tabGroupRef.end, sizes.componentSpacing)
+                            end.linkTo(standaloneTabRef.start, sizes.componentSpacing)
+                        }
+                        hasInlineTab -> {
+                            start.linkTo(tabGroupRef.end, sizes.componentSpacing)
+                            end.linkTo(parent.end)
+                        }
+                        hasStandaloneTab -> {
+                            start.linkTo(parent.start)
+                            end.linkTo(standaloneTabRef.start, sizes.componentSpacing)
+                        }
+                        else -> {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                    }
+                }
+            )
+        }
 
-        InlineStandaloneTab(
-            scope = scope,
-            shapes = shapes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            tabBarContentModifier = tabBarContentModifier,
-            modifier = Modifier.constrainAs(searchTabRef) {
-                height = Dimension.fillToConstraints
-                width = Dimension.ratio("1:1")
-                top.linkTo(tabGroupRef.top)
-                bottom.linkTo(tabGroupRef.bottom)
-                end.linkTo(parent.end)
-            }
-        )
+        if (hasStandaloneTab) {
+            InlineStandaloneTab(
+                standaloneTab = standaloneTab,
+                shapes = shapes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                tabBarContentModifier = tabBarContentModifier,
+                modifier = Modifier.constrainAs(standaloneTabRef) {
+                    width = Dimension.ratio("1:1")
+                    end.linkTo(parent.end)
+                    if (hasInlineTab) {
+                        height = Dimension.fillToConstraints
+                        centerVerticallyTo(tabGroupRef)
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 private fun SharedTransitionScope.InlineTab(
-    scope: FloatingTabBarScopeImpl,
-    selectedTabKey: Any?,
+    inlineTab: FloatingTabBarTab,
     onInlineTabClick: () -> Unit,
     shapes: FloatingTabBarShapes,
     sizes: FloatingTabBarSizes,
@@ -419,57 +445,54 @@ private fun SharedTransitionScope.InlineTab(
     modifier: Modifier,
     tabBarContentModifier: Modifier
 ) {
-    val inlineTab = scope.getInlineTab(selectedTabKey)
-    inlineTab?.let {
-        Box(
-            modifier = modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState("tabGroup"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    zIndexInOverlay = 1f
-                )
-                .shadow(
-                    shape = shapes.tabBarShape,
-                    elevation = elevations.inlineElevation
-                )
-                .background(
-                    color = colors.backgroundColor,
-                    shape = shapes.tabBarShape
-                )
-                .clip(shapes.tabBarShape)
-                .then(tabBarContentModifier)
-                .clickable(
-                    onClick = {
-                        onInlineTabClick()
-                        inlineTab.onClick()
-                    },
-                    indication = inlineTab.indication?.invoke(),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
-                .padding(sizes.tabInlineContentPadding)
-        ) {
-            Tab(
-                icon = {
-                    Box(
-                        Modifier.sharedElement(
-                            sharedContentState = rememberSharedContentState("tab#${inlineTab.key}-icon"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            zIndexInOverlay = 1f
-                        )
-                    ) {
-                        inlineTab.icon()
-                    }
-                },
-                title = { inlineTab.title() },
-                isInline = true
+    Box(
+        modifier = modifier
+            .sharedElement(
+                sharedContentState = rememberSharedContentState("tabGroup"),
+                animatedVisibilityScope = animatedVisibilityScope,
+                zIndexInOverlay = 1f
             )
-        }
+            .shadow(
+                shape = shapes.tabBarShape,
+                elevation = elevations.inlineElevation
+            )
+            .background(
+                color = colors.backgroundColor,
+                shape = shapes.tabBarShape
+            )
+            .clip(shapes.tabBarShape)
+            .then(tabBarContentModifier)
+            .clickable(
+                onClick = {
+                    onInlineTabClick()
+                    inlineTab.onClick()
+                },
+                indication = inlineTab.indication?.invoke(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+            .padding(sizes.tabInlineContentPadding)
+    ) {
+        Tab(
+            icon = {
+                Box(
+                    Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState("tab#${inlineTab.key}-icon"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        zIndexInOverlay = 1f
+                    )
+                ) {
+                    inlineTab.icon()
+                }
+            },
+            title = { inlineTab.title() },
+            isInline = true
+        )
     }
 }
 
 @Composable
 private fun SharedTransitionScope.InlineStandaloneTab(
-    scope: FloatingTabBarScopeImpl,
+    standaloneTab: FloatingTabBarTab,
     shapes: FloatingTabBarShapes,
     colors: FloatingTabBarColors,
     elevations: FloatingTabBarElevations,
@@ -477,35 +500,33 @@ private fun SharedTransitionScope.InlineStandaloneTab(
     modifier: Modifier,
     tabBarContentModifier: Modifier
 ) {
-    scope.standaloneTab?.let { standaloneTab ->
-        Tab(
-            icon = standaloneTab.icon,
-            title = standaloneTab.title,
-            isInline = true,
-            isStandalone = true,
-            modifier = modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState("standaloneTab"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    zIndexInOverlay = 1f
-                )
-                .shadow(
-                    shape = shapes.standaloneTabShape,
-                    elevation = elevations.inlineElevation
-                )
-                .background(
-                    color = colors.backgroundColor,
-                    shape = shapes.standaloneTabShape
-                )
-                .clip(shapes.standaloneTabShape)
-                .then(tabBarContentModifier)
-                .clickable(
-                    onClick = standaloneTab.onClick,
-                    indication = standaloneTab.indication?.invoke(),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
-        )
-    }
+    Tab(
+        icon = standaloneTab.icon,
+        title = standaloneTab.title,
+        isInline = true,
+        isStandalone = true,
+        modifier = modifier
+            .sharedElement(
+                sharedContentState = rememberSharedContentState("standaloneTab"),
+                animatedVisibilityScope = animatedVisibilityScope,
+                zIndexInOverlay = 1f
+            )
+            .shadow(
+                shape = shapes.standaloneTabShape,
+                elevation = elevations.inlineElevation
+            )
+            .background(
+                color = colors.backgroundColor,
+                shape = shapes.standaloneTabShape
+            )
+            .clip(shapes.standaloneTabShape)
+            .then(tabBarContentModifier)
+            .clickable(
+                onClick = standaloneTab.onClick,
+                indication = standaloneTab.indication?.invoke(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    )
 }
 
 @Composable
@@ -563,64 +584,83 @@ private fun SharedTransitionScope.ExpandedBar(
     tabBarContentModifier: Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
+    val standaloneTab = scope.standaloneTab
+    val hasStandaloneTab = standaloneTab != null
+    val hasTabGroup = scope.tabs.isNotEmpty()
+
     ConstraintLayout(Modifier.fillMaxWidth()) {
-        val (accessoryRef, tabGroupTabsRef, searchTabRef) = createRefs()
+        val (accessoryRef, tabGroupRef, standaloneTabRef) = createRefs()
         
-        ExpandedAccessory(
-            accessory = accessory,
-            isAccessoryShared = isAccessoryShared,
-            shapes = shapes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            modifier = Modifier.constrainAs(accessoryRef) {
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                top.linkTo(parent.top)
-            }
-        )
-
-        ExpandedTabs(
-            scope = scope,
-            selectedTabKey = selectedTabKey,
-            shapes = shapes,
-            sizes = sizes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            tabBarContentModifier = tabBarContentModifier,
-            modifier = Modifier
-                .constrainAs(tabGroupTabsRef) {
-                    width = Dimension.fillToConstraints
+        if (accessory != null) {
+            ExpandedAccessory(
+                accessory = accessory,
+                isAccessoryShared = isAccessoryShared,
+                shapes = shapes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                modifier = Modifier.constrainAs(accessoryRef) {
                     start.linkTo(parent.start)
-                    end.linkTo(searchTabRef.start, margin = sizes.componentSpacing)
-                    top.linkTo(accessoryRef.bottom, margin = sizes.componentSpacing)
-                    horizontalBias = 0f
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
                 }
-                .wrapContentWidth(align = Alignment.Start)
-        )
+            )
+        }
 
-        ExpandedStandaloneTab(
-            scope = scope,
-            shapes = shapes,
-            colors = colors,
-            elevations = elevations,
-            animatedVisibilityScope = animatedVisibilityScope,
-            tabBarContentModifier = tabBarContentModifier,
-            modifier = Modifier.constrainAs(searchTabRef) {
-                height = Dimension.fillToConstraints
-                width = Dimension.ratio("1:1")
-                top.linkTo(tabGroupTabsRef.top)
-                bottom.linkTo(tabGroupTabsRef.bottom)
-                end.linkTo(parent.end)
-            }
-        )
+        if (hasTabGroup) {
+            ExpandedTabs(
+                scope = scope,
+                selectedTabKey = selectedTabKey,
+                shapes = shapes,
+                sizes = sizes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                tabBarContentModifier = tabBarContentModifier,
+                modifier = Modifier
+                    .constrainAs(tabGroupRef) {
+                        width = Dimension.fillToConstraints
+                        start.linkTo(parent.start)
+                        if (hasStandaloneTab) {
+                            end.linkTo(standaloneTabRef.start, margin = sizes.componentSpacing)
+                        } else {
+                            end.linkTo(parent.end)
+                        }
+                        if (accessory != null) {
+                            top.linkTo(accessoryRef.bottom, margin = sizes.componentSpacing)
+                        }
+                        horizontalBias = 0f
+                    }
+                    .wrapContentWidth(align = Alignment.Start)
+            )
+        }
+
+        if (hasStandaloneTab) {
+            ExpandedStandaloneTab(
+                standaloneTab = standaloneTab,
+                shapes = shapes,
+                colors = colors,
+                elevations = elevations,
+                animatedVisibilityScope = animatedVisibilityScope,
+                tabBarContentModifier = tabBarContentModifier,
+                modifier = Modifier.constrainAs(standaloneTabRef) {
+                    width = Dimension.ratio("1:1")
+                    end.linkTo(parent.end)
+                    if (hasTabGroup) {
+                        height = Dimension.fillToConstraints
+                        centerVerticallyTo(tabGroupRef)
+                    } else if (accessory != null) {
+                        top.linkTo(accessoryRef.bottom, margin = sizes.componentSpacing)
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 private fun SharedTransitionScope.ExpandedAccessory(
-    accessory: (@Composable SharedTransitionScope.(Modifier, AnimatedVisibilityScope) -> Unit)?,
+    accessory: @Composable SharedTransitionScope.(Modifier, AnimatedVisibilityScope) -> Unit,
     isAccessoryShared: Boolean,
     colors: FloatingTabBarColors,
     shapes: FloatingTabBarShapes,
@@ -628,34 +668,32 @@ private fun SharedTransitionScope.ExpandedAccessory(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier
 ) {
-    accessory?.let { accessory ->
-        Box(
-            modifier = modifier
-                .then(
-                    if (isAccessoryShared) {
-                        Modifier.sharedElement(
-                            sharedContentState = rememberSharedContentState("accessory"),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                    } else {
-                        Modifier.animateEnterExitAccessory(
-                            sharedTransitionScope = this,
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                    }
-                )
-        ) {
-            accessory(
-                Modifier
-                    .shadow(
-                        shape = shapes.accessoryShape,
-                        elevation = elevations.expandedElevation
+    Box(
+        modifier = modifier
+            .then(
+                if (isAccessoryShared) {
+                    Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState("accessory"),
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
-                    .background(color = colors.accessoryBackgroundColor, shapes.accessoryShape)
-                    .clip(shapes.accessoryShape),
-                animatedVisibilityScope
+                } else {
+                    Modifier.animateEnterExitAccessory(
+                        sharedTransitionScope = this,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                }
             )
-        }
+    ) {
+        accessory(
+            Modifier
+                .shadow(
+                    shape = shapes.accessoryShape,
+                    elevation = elevations.expandedElevation
+                )
+                .background(color = colors.accessoryBackgroundColor, shapes.accessoryShape)
+                .clip(shapes.accessoryShape),
+            animatedVisibilityScope
+        )
     }
 }
 @Composable
@@ -741,7 +779,7 @@ private fun SharedTransitionScope.ExpandedTabs(
 
 @Composable
 private fun SharedTransitionScope.ExpandedStandaloneTab(
-    scope: FloatingTabBarScopeImpl,
+    standaloneTab: FloatingTabBarTab,
     shapes: FloatingTabBarShapes,
     colors: FloatingTabBarColors,
     elevations: FloatingTabBarElevations,
@@ -749,35 +787,33 @@ private fun SharedTransitionScope.ExpandedStandaloneTab(
     modifier: Modifier,
     tabBarContentModifier: Modifier
 ) {
-    scope.standaloneTab?.let { standaloneTab ->
-        Tab(
-            icon = standaloneTab.icon,
-            title = standaloneTab.title,
-            isInline = false,
-            isStandalone = true,
-            modifier = modifier
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState("standaloneTab"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    zIndexInOverlay = 1f
-                )
-                .shadow(
-                    shape = shapes.standaloneTabShape,
-                    elevation = elevations.expandedElevation
-                )
-                .background(
-                    color = colors.backgroundColor,
-                    shape = shapes.standaloneTabShape
-                )
-                .clip(shapes.standaloneTabShape)
-                .then(tabBarContentModifier)
-                .clickable(
-                    onClick = standaloneTab.onClick,
-                    indication = standaloneTab.indication?.invoke(),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
-        )
-    }
+    Tab(
+        icon = standaloneTab.icon,
+        title = standaloneTab.title,
+        isInline = false,
+        isStandalone = true,
+        modifier = modifier
+            .sharedElement(
+                sharedContentState = rememberSharedContentState("standaloneTab"),
+                animatedVisibilityScope = animatedVisibilityScope,
+                zIndexInOverlay = 1f
+            )
+            .shadow(
+                shape = shapes.standaloneTabShape,
+                elevation = elevations.expandedElevation
+            )
+            .background(
+                color = colors.backgroundColor,
+                shape = shapes.standaloneTabShape
+            )
+            .clip(shapes.standaloneTabShape)
+            .then(tabBarContentModifier)
+            .clickable(
+                onClick = standaloneTab.onClick,
+                indication = standaloneTab.indication?.invoke(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    )
 }
 
 @Composable
