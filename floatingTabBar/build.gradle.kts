@@ -45,7 +45,7 @@ mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
 
-    coordinates("io.github.elyesmansour", "floatingTabBar", "1.0.0")
+    coordinates("io.github.elyesmansour", "floatingTabBar", "1.0.1")
 
     pom {
         name = "FloatingTabBar"
