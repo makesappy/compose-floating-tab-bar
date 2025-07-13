@@ -33,7 +33,9 @@ dependencyResolutionManagement {
 }
 ```
 
-## Basic Usage
+## Usage
+
+### With Scroll Connection
 ```kotlin
 val scrollConnection = rememberFloatingTabBarScrollConnection()
 var selectedTabKey by remember { mutableStateOf("home") }
@@ -80,7 +82,18 @@ Box(modifier = Modifier.fillMaxSize()) {
 }
 ```
 
-## Usage with Accessory
+### With Boolean State Control
+```kotlin
+FloatingTabBar(
+    isInline = if (condition) true else false,
+    selectedTabKey = selectedTabKey,
+    ...
+) {
+    // Your tabs...
+}
+```
+
+### Accessory
 The inline and expanded accessory composable lambdas are extension function of `SharedTransitionLayoutScope` and provide an `animatedVisibilityScope` parameter, so it's possible to customize the accessory transition between the two states to be in sync with the tab bar's transition.
 
 ```kotlin
@@ -103,7 +116,7 @@ FloatingTabBar(
 }
 ```
 
-## Background blurring effects using Haze by Chris Banes
+### Background blurring effects using Haze by Chris Banes
 
 ```kotlin
 Box {
@@ -132,6 +145,21 @@ Box {
     ) {
         // Your tabs...
     }
+}
+```
+
+### Dynamic Tab Content
+
+The `contentKey` parameter allows you to refresh the tab bar content when your tabs change dynamically:
+
+```kotlin
+FloatingTabBar(
+    selectedTabKey = selectedTabKey,
+    scrollConnection = scrollConnection,
+    contentKey = tabs.size, // Refreshes the list of tabs when the size changes for example
+    ...
+) {
+    // Your tabs
 }
 ```
 
