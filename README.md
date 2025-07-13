@@ -10,6 +10,17 @@ A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar b
 
 *Sample app using background blurring effects*
 
+### Table of Contents
+- [Features](#features)
+- [Setup](#setup)
+- [Usage](#usage)
+    - [With Scroll Connection](#with-scroll-connection)
+    - [With Boolean State Control](#with-boolean-state-control)
+    - [Accessory](#accessory)
+    - [Background blurring effects using Haze by Chris Banes](#background-blurring-effects-using-haze-by-chris-banes)
+    - [Dynamic Tab Content](#dynamic-tab-content)
+- [License](#license)
+
 ## Features
 
 - **Expanded and Inline States**: Transition between both states when scrolling
