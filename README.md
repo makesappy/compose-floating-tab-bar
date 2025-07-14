@@ -148,7 +148,7 @@ Box {
             )
         },
         expandedAccessory = { modifier, animatedVisibilityScope ->
-            MiniPlayer(
+            ExpandedMiniPlayer(
                 modifier = modifier.hazeEffect(hazeState),
                 animatedVisibilityScope = animatedVisibilityScope
             )
