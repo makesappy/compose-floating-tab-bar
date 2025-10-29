@@ -86,7 +86,7 @@ mavenPublishing {
         signAllPublications()
     }
 
-    coordinates("io.github.elyesmansour", "floatingTabBar", "2.0.6")
+    coordinates("io.github.elyesmansour", "floatingTabBar", "1.0.1")
 
     pom {
         name = "FloatingTabBar"
