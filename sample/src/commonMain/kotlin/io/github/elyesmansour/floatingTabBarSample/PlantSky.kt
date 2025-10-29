@@ -16,14 +16,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -45,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.hazeEffect
@@ -58,149 +53,148 @@ import io.github.elyesmansour.floatingTabBarSample.screens.HomeScreen
 import io.github.elyesmansour.floatingTabBarSample.screens.PodcastsScreen
 import io.github.elyesmansour.floatingTabBarSample.screens.ProfileScreen
 import io.github.elyesmansour.floatingTabBarSample.screens.SearchScreen
-import io.github.elyesmansour.floatingTabBarSample.ui.theme.FloatingTabBarTheme
 
-@Preview
 @Composable
-fun PlantSky() {
-    FloatingTabBarTheme {
-        val scrollConnection = rememberFloatingTabBarScrollConnection()
-        var selectedTabKey by remember { mutableStateOf<Any>("home") }
+fun PlantSky(
+    topPadding: Modifier = Modifier,
+    bottomPadding: Modifier = Modifier
+) {
+    val scrollConnection = rememberFloatingTabBarScrollConnection()
+    var selectedTabKey by remember { mutableStateOf<Any>("home") }
 
-        val hazeState = rememberHazeState()
-        val hazeEffectModifier = remember {
-            Modifier.hazeEffect(hazeState) { noiseFactor = 0f }
-        }
+    val hazeState = rememberHazeState()
+    val hazeEffectModifier = remember {
+        Modifier.hazeEffect(hazeState) { noiseFactor = 0f }
+    }
 
-        val leadingTabs = remember {
-            listOf(
-                PlantSkyTab("home", "Home", Icons.Default.Home),
-                PlantSkyTab("podcasts", "Podcasts", Icons.Default.PlayArrow),
-                PlantSkyTab("profile", "Profile", Icons.Default.Person)
+    val leadingTabs = remember {
+        listOf(
+            PlantSkyTab("home", "Home", Icons.Default.Home),
+            PlantSkyTab("podcasts", "Podcasts", Icons.Default.PlayArrow),
+            PlantSkyTab("profile", "Profile", Icons.Default.Person)
+        )
+    }
+    val trailingTab = remember {
+        PlantSkyTab("search", "", Icons.Default.Search)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .then(topPadding)
+    ) {
+        // Main content area with animated tab switching
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+        ) {
+            Text(
+                text = "PlantSky",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
             )
-        }
-        val trailingTab = remember {
-            PlantSkyTab("search", "", Icons.Default.Search)
+
+            AnimatedContent(
+                targetState = selectedTabKey,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                modifier = Modifier
+                    .weight(1f)
+                    .hazeSource(hazeState)
+            ) { target ->
+                when (target) {
+                    "home" -> HomeScreen(scrollConnection = scrollConnection)
+                    "profile" -> ProfileScreen(scrollConnection = scrollConnection)
+                    "podcasts" -> PodcastsScreen(scrollConnection = scrollConnection)
+                    "search" -> SearchScreen(scrollConnection = scrollConnection)
+                }
+            }
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
-                .windowInsetsPadding(WindowInsets.statusBars)
-        ) {
-            // Main content area with animated tab switching
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 16.dp)
-            ) {
-                Text(
-                    text = "PlantSky",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
-                )
-
-                AnimatedContent(
-                    targetState = selectedTabKey,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    modifier = Modifier
-                        .weight(1f)
-                        .hazeSource(hazeState)
-                ) { target ->
-                    when (target) {
-                        "home" -> HomeScreen(scrollConnection = scrollConnection)
-                        "profile" -> ProfileScreen(scrollConnection = scrollConnection)
-                        "podcasts" -> PodcastsScreen(scrollConnection = scrollConnection)
-                        "search" -> SearchScreen(scrollConnection = scrollConnection)
-                    }
-                }
-            }
-
-            Box(
-                Modifier
-                    .then(
-                        if (scrollConnection.isInline) {
-                            Modifier.hazeEffect(hazeState) {
-                                noiseFactor = 0f
-                                progressive = HazeProgressive.verticalGradient(
-                                    startIntensity = 0.05f
-                                )
-                            }
-                        } else {
-                            Modifier
+            Modifier
+                .then(
+                    if (scrollConnection.isInline) {
+                        Modifier.hazeEffect(hazeState) {
+                            noiseFactor = 0f
+                            progressive = HazeProgressive.verticalGradient(
+                                startIntensity = 0.05f
+                            )
                         }
+                    } else {
+                        Modifier
+                    }
+                )
+                .align(Alignment.BottomCenter)
+                .then(bottomPadding)
+        ) {
+            FloatingTabBar(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                selectedTabKey = selectedTabKey,
+                scrollConnection = scrollConnection,
+                tabBarContentModifier = hazeEffectModifier,
+                inlineAccessory = { modifier, animatedVisibilityScope ->
+                    PlantSkyAccessory(
+                        modifier = modifier.then(hazeEffectModifier),
+                        isInline = true,
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
-                    .align(Alignment.BottomCenter)
+                },
+                expandedAccessory = { modifier, animatedVisibilityScope ->
+                    PlantSkyAccessory(
+                        modifier = modifier.then(hazeEffectModifier),
+                        isInline = false,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                },
+                sizes = FloatingTabBarDefaults.sizes(
+                    tabExpandedContentPadding = PaddingValues(
+                        vertical = 6.dp,
+                        horizontal = 16.dp
+                    )
+                )
             ) {
-                FloatingTabBar(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .windowInsetsPadding(WindowInsets.navigationBars),
-                    selectedTabKey = selectedTabKey,
-                    scrollConnection = scrollConnection,
-                    tabBarContentModifier = hazeEffectModifier,
-                    inlineAccessory = { modifier, animatedVisibilityScope ->
-                        PlantSkyAccessory(
-                            modifier = modifier.then(hazeEffectModifier),
-                            isInline = true,
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                    },
-                    expandedAccessory = { modifier, animatedVisibilityScope ->
-                        PlantSkyAccessory(
-                            modifier = modifier.then(hazeEffectModifier),
-                            isInline = false,
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                    },
-                    sizes = FloatingTabBarDefaults.sizes(
-                        tabExpandedContentPadding = PaddingValues(
-                            vertical = 6.dp,
-                            horizontal = 16.dp
-                        )
-                    )
-                ) {
-                    val tabTint = @Composable { isSelected: Boolean ->
-                        if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
-                    }
-                    val indication = @Composable { ripple(color = MaterialTheme.colorScheme.tertiary) }
-                    
-                    leadingTabs.forEach { tabItem ->
-                        tab(
-                            key = tabItem.key,
-                            title = {
-                                Text(
-                                    text = tabItem.text,
-                                    color = tabTint(selectedTabKey == tabItem.key)
-                                )
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = tabItem.icon,
-                                    contentDescription = null,
-                                    tint = tabTint(selectedTabKey == tabItem.key)
-                                )
-                            },
-                            onClick = { selectedTabKey = tabItem.key },
-                            indication = indication
-                        )
-                    }
-
-                    standaloneTab(
-                        key = trailingTab.key,
-                        icon = {
-                            Icon(
-                                imageVector = trailingTab.icon,
-                                contentDescription = null,
-                                tint = tabTint(selectedTabKey == trailingTab.key)
+                val tabTint = @Composable { isSelected: Boolean ->
+                    if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
+                }
+                val indication = @Composable { ripple(color = MaterialTheme.colorScheme.tertiary) }
+                
+                leadingTabs.forEach { tabItem ->
+                    tab(
+                        key = tabItem.key,
+                        title = {
+                            Text(
+                                text = tabItem.text,
+                                color = tabTint(selectedTabKey == tabItem.key)
                             )
                         },
-                        onClick = { selectedTabKey = trailingTab.key },
+                        icon = {
+                            Icon(
+                                imageVector = tabItem.icon,
+                                contentDescription = null,
+                                tint = tabTint(selectedTabKey == tabItem.key)
+                            )
+                        },
+                        onClick = { selectedTabKey = tabItem.key },
                         indication = indication
                     )
                 }
+
+                standaloneTab(
+                    key = trailingTab.key,
+                    icon = {
+                        Icon(
+                            imageVector = trailingTab.icon,
+                            contentDescription = null,
+                            tint = tabTint(selectedTabKey == trailingTab.key)
+                        )
+                    },
+                    onClick = { selectedTabKey = trailingTab.key },
+                    indication = indication
+                )
             }
         }
     }
@@ -279,7 +273,7 @@ private fun SharedTransitionScope.PlantSkyAccessory(
                 )
 
                 LinearProgressIndicator(
-                    progress = 0.35f,
+                    progress = { 0.35f },
                     modifier = Modifier
                         .padding(top = 4.dp)
                         .fillMaxWidth(),
@@ -318,3 +312,5 @@ private data class PlantSkyTab(
     val text: String,
     val icon: ImageVector
 )
+
+

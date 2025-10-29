@@ -1,10 +1,12 @@
+... WIP ...
+
 # FloatingTabBar
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.elyesmansour/floatingTabBar)](https://central.sonatype.com/artifact/io.github.elyesmansour/floatingTabBar)
 [![Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/compose-1.8.3-blue.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/androidx/releases/compose)
 
-A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior.
+A Jetbrains Compose Multiplatforms floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior.
 
 <img src="assets/demo.gif" width="250">
 
