@@ -253,7 +253,7 @@ private fun PodcastEpisodeCard(
                     }
                     
                     LinearProgressIndicator(
-                        progress = episode.progress,
+                        progress = { episode.progress },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp),

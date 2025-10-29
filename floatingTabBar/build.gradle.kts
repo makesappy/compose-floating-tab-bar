@@ -1,9 +1,50 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.vanniktech.maven.publish)
     alias(libs.plugins.gradleup.nmcp)
+}
+
+kotlin {
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+        publishLibraryVariants("release")
+    }
+    
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "FloatingTabBar"
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            // Use api for iOS framework export
+            api(compose.runtime)
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.ui)
+            api(compose.animation)
+            api(libs.constraintlayout.compose.multiplatform)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
+        }
+    }
 }
 
 android {
@@ -12,7 +53,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -32,10 +72,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
     buildFeatures {
         compose = true
     }
@@ -43,13 +79,18 @@ android {
 
 mavenPublishing {
     publishToMavenCentral()
-    signAllPublications()
+    
+    // Only sign publications when publishing to Maven Central
+    // Skip signing for local development (publishToMavenLocal)
+    if (project.hasProperty("mavenCentralUsername")) {
+        signAllPublications()
+    }
 
-    coordinates("io.github.elyesmansour", "floatingTabBar", "1.0.1")
+    coordinates("io.github.elyesmansour", "floatingTabBar", "2.0.6")
 
     pom {
         name = "FloatingTabBar"
-        description = "A Jetpack Compose floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior"
+        description = "A Compose Multiplatform floating tab bar that mimics the iOS 26 Liquid Glass tab bar behavior"
         url = "https://github.com/elyesmansour/compose-floating-tab-bar"
         licenses {
             license {
@@ -71,11 +112,4 @@ mavenPublishing {
             url = "https://github.com/elyesmansour/compose-floating-tab-bar"
         }
     }
-}
-
-dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.constraintlayout.compose)
 }
